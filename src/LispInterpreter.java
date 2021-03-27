@@ -1,11 +1,17 @@
 package src;
 
+import java.util.Stack;
+
 public class LispInterpreter {
     public static void main(String[] args) {
         Lexer lexer = new Lexer();
 
-        String[] i = "'(+ (+ 1 29) zb(- 3 (* 00 4)))".split("\\s+|(?=\\))|(?<=\\()");
+        String i = "ab(+ (+ 1 29) (- 3 (* 00 4)))";
 
-        for(String n : i) System.out.println(n);
+        Stack<Token> n = lexer.tokenize(i);
+
+        while(true){
+            System.out.println(n.pop());
+        }
     }
 }
