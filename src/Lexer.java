@@ -9,7 +9,7 @@ public class Lexer {
 
     private Stack<String> split(String text){
 
-        Stack<String> tokenStack = new Stack<>();
+        Stack<String> tokenStack = new Stack<String>();
 
         ArrayList<String> strings = new ArrayList<String>(
                 Arrays.asList(text.split("\\s+|(?=\\))|(?<=\\()|(?<=\\))|(?=\\()")));
@@ -28,7 +28,7 @@ public class Lexer {
 
         Stack<String> tokenStrings = split(text);
 
-        Stack<Token> tokens = new Stack<>();
+        Stack<Token> tokens = new Stack<Token>();
 
         while(!tokenStrings.isEmpty()){
             String i = tokenStrings.pop();
