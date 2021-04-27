@@ -9,7 +9,7 @@ public class Executor {
 
     private HashMap<String, Function<List<String>, String>> primitiveFns = new HashMap();
 
-    private HashMap<String, SyntaxNode> functions = new HashMap();
+    private ArrayList<PurpleFunction> functions = new ArrayList<>();
 
     private static Executor instance;
 
@@ -26,26 +26,40 @@ public class Executor {
             }
             return Integer.toString(sum);
         });
-        primitiveFns.put("", (List<String> args) -> args.get(0));
-        primitiveFns.put("lambda", (List<String> args) ->{
+        primitiveFns.put("", (List<String> args) -> {
+            if(args.size() == 1) return args.get(0);
 
+            String output = "";
 
+            for(String i : args){
+                output += i + ", ";
+            }
 
-            return"";
+            return output;
+        });
+        primitiveFns.put("deref", (List<String> args) -> execute(SyntaxNode.getNodeByID(Integer.decode(args.get(0)))));
+        primitiveFns.put("print", (List<String> args) -> {args.forEach((String i) -> {
+            System.out.println(i);
+        });
+        return "";
         });
     }
 
     public String execute(SyntaxNode root){
 
-        ArrayList<String> args = new ArrayList();
-        for(SyntaxNode i : root.getChildren()){
-            args.add(execute(i));
-        }
+
 
         Token token = root.getToken();
 
         switch (token.type){
             case function:
+                if(token.tokenData.equals("ref")) return Integer.toString(root.getChildren().get(0).getId());
+
+                ArrayList<String> args = new ArrayList();
+                for(SyntaxNode i : root.getChildren()){
+                    args.add(execute(i));
+                }
+
                 if(isPrimitiveFn(token.tokenData)) return runPrimitiveFn(token.tokenData, args);
                 break;
 
@@ -56,7 +70,9 @@ public class Executor {
         return "";
     }
 
-    private String runPrimitiveFn(String tokenData, ArrayList<String> args) { return primitiveFns.get(tokenData).apply(args); }
+    private String runPrimitiveFn(String tokenData, ArrayList<String> args) {
+        return primitiveFns.get(tokenData).apply(args);
+    }
 
     private boolean isPrimitiveFn(String tokenData) {
         return primitiveFns.containsKey(tokenData);

@@ -13,6 +13,8 @@ public class Interpreter {
 
         while(true) {
 
+            System.out.print(">>");
+
             String i = scanner.nextLine();
 
             Stack<Token> n = lexer.tokenize(i);
