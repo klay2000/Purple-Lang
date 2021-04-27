@@ -30,5 +30,11 @@ public class SyntaxNode {
         children.add(child);
     }
 
+    public void printTree(){
+        System.out.println(this.token.tokenData);
+        for( SyntaxNode i : children){
+            i.printTree();
+        }
+    }
 
 }
