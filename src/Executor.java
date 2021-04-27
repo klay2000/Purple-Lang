@@ -9,6 +9,8 @@ public class Executor {
 
     private HashMap<String, Function<List<String>, String>> primitiveFns = new HashMap();
 
+    private HashMap<String, SyntaxNode> functions = new HashMap();
+
     private static Executor instance;
 
     public static Executor getInstance() {
@@ -25,6 +27,12 @@ public class Executor {
             return Integer.toString(sum);
         });
         primitiveFns.put("", (List<String> args) -> args.get(0));
+        primitiveFns.put("lambda", (List<String> args) ->{
+
+
+
+            return"";
+        });
     }
 
     public String execute(SyntaxNode root){
@@ -48,9 +56,7 @@ public class Executor {
         return "";
     }
 
-    private String runPrimitiveFn(String tokenData, ArrayList<String> args) {
-        return primitiveFns.get(tokenData).apply(args);
-    }
+    private String runPrimitiveFn(String tokenData, ArrayList<String> args) { return primitiveFns.get(tokenData).apply(args); }
 
     private boolean isPrimitiveFn(String tokenData) {
         return primitiveFns.containsKey(tokenData);
