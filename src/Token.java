@@ -17,7 +17,7 @@ public class Token{
                 break;
 
             default:
-                if(tokenString.matches("\\d+")){
+                if(tokenString.matches("-?\\d+")){
                     type = TokenType.literal;
                 }
                 else{

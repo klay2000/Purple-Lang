@@ -1,21 +1,26 @@
 package src;
 
+import java.util.Scanner;
 import java.util.Stack;
 
 public class Interpreter {
     public static void main(String[] args) {
         Lexer lexer = new Lexer();
         Parser parser = new Parser();
-        Executor exec = new Executor();
+        Executor exec = Executor.getInstance();
 
-        String i = "+(+(1 29) 2)";
+        Scanner scanner = new Scanner(System.in);
 
-        Stack<Token> n = lexer.tokenize(i);
+        while(true) {
 
-        SyntaxNode root = parser.parse(n);
+            String i = scanner.nextLine();
 
-        System.out.println(exec.execute(root));
+            Stack<Token> n = lexer.tokenize(i);
 
+            SyntaxNode root = parser.parse(n);
+
+            System.out.println(exec.execute(root));
+        }
 
     }
 }

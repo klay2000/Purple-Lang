@@ -9,7 +9,14 @@ public class Executor {
 
     private HashMap<String, Function<List<String>, String>> primitiveFns = new HashMap();
 
-    public Executor(){
+    private static Executor instance;
+
+    public static Executor getInstance() {
+        if(instance == null) instance = new Executor();
+        return instance;
+    }
+
+    private Executor(){
         primitiveFns.put("+", (List<String> args) -> {
             int sum = 0;
             for(String i : args) {
