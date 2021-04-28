@@ -59,8 +59,6 @@ public class Executor {
 
                     ArrayList<SyntaxNode> args = new ArrayList<>();
 
-                    System.out.println(root.getChildren().size());
-
                     for(SyntaxNode i : root.getChildren().get(0).getChildren()){
                         args.add(i);
                     }
@@ -85,11 +83,11 @@ public class Executor {
 
                 // otherwise get it, set it's variables, then run it.
                 PurpleFunction fun = SM.getFunction(token.tokenData, depth);
-                for(SyntaxNode i : fun.args){
-
+                for(int i = 0; i < fun.args.size(); i++){
+                    SM.addFunction(new PurpleFunction(args.get(i), fun.args.get(i).getToken().tokenData, depth));
                 }
 
-                break;
+                return execute(fun.rootNode, depth);
 
             case literal:
                 return token.tokenData;

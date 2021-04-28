@@ -1,5 +1,6 @@
 package src;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PurpleFunction {
@@ -13,5 +14,9 @@ public class PurpleFunction {
         this.name = name;
         this.args = args;
         this.depth = depth;
+    }
+
+    public PurpleFunction(String value, String name, int depth){
+        this(new SyntaxNode(new Token(value)), name, new ArrayList<>(), depth);
     }
 }
