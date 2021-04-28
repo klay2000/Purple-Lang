@@ -5,4 +5,5 @@ public enum TokenType {
     open,
     close,
     literal
+
 }

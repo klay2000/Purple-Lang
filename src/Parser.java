@@ -17,6 +17,7 @@ public class Parser {
             switch (stack.peek().type) {
                 case open:
                     stack.pop();
+                    if(root.getChildren().size() == 0) root.addChild(new SyntaxNode(new Token("")));
                     parseSubtree(stack, root.getChildren().get(root.getChildren().size()-1));
                     break;
 

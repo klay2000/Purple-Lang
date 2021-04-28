@@ -1,6 +1,7 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
@@ -9,9 +10,9 @@ public class Executor {
 
     private HashMap<String, Function<List<String>, String>> primitiveFns = new HashMap();
 
-    private ArrayList<PurpleFunction> functions = new ArrayList<>();
-
     private static Executor instance;
+
+    private FunctionStackManager SM = new FunctionStackManager();
 
     public static Executor getInstance() {
         if(instance == null) instance = new Executor();
@@ -29,38 +30,65 @@ public class Executor {
         primitiveFns.put("", (List<String> args) -> {
             if(args.size() == 1) return args.get(0);
 
-            String output = "";
+            String output = "(";
 
             for(String i : args){
                 output += i + ", ";
             }
+            output += ")";
 
             return output;
         });
         primitiveFns.put("deref", (List<String> args) -> execute(SyntaxNode.getNodeByID(Integer.decode(args.get(0)))));
         primitiveFns.put("print", (List<String> args) -> {args.forEach((String i) -> {
-            System.out.println(i);
-        });
-        return "";
+                System.out.println(i);
+            });
+            return "";
         });
     }
 
-    public String execute(SyntaxNode root){
-
-
+    public String execute(SyntaxNode root, int depth){
+        depth += 1;
 
         Token token = root.getToken();
 
         switch (token.type){
             case function:
                 if(token.tokenData.equals("ref")) return Integer.toString(root.getChildren().get(0).getId());
+                if(token.tokenData.equals("=")){
+
+                    ArrayList<SyntaxNode> args = new ArrayList<>();
+
+                    System.out.println(root.getChildren().size());
+
+                    for(SyntaxNode i : root.getChildren().get(0).getChildren()){
+                        args.add(i);
+                    }
+
+                    PurpleFunction fun = new PurpleFunction(root.getChildren().get(root.getChildren().size()-1),
+                            root.getChildren().get(0).getToken().tokenData,
+                            args,
+                            depth-1);
+
+                    SM.addFunction(fun);
+
+                    return "";
+                }
 
                 ArrayList<String> args = new ArrayList();
                 for(SyntaxNode i : root.getChildren()){
-                    args.add(execute(i));
+                    args.add(execute(i, depth));
                 }
 
+                // if it's a built in function run it
                 if(isPrimitiveFn(token.tokenData)) return runPrimitiveFn(token.tokenData, args);
+
+                // otherwise get it, set it's variables, then run it.
+                PurpleFunction fun = SM.getFunction(token.tokenData, depth);
+                for(SyntaxNode i : fun.args){
+
+                }
+
                 break;
 
             case literal:
@@ -68,6 +96,10 @@ public class Executor {
         }
 
         return "";
+    }
+
+    public String execute(SyntaxNode root){
+        return execute(root, -1);
     }
 
     private String runPrimitiveFn(String tokenData, ArrayList<String> args) {
