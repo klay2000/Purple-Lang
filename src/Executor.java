@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Executor {
 
-    private HashMap<String, Function<List<String>, String>> primitiveFns = new HashMap();
+    private HashMap<String, BiFunction<List<SyntaxNode>, Integer, String>> primitiveFns = new HashMap();
 
     private static Executor instance;
 
@@ -20,31 +21,33 @@ public class Executor {
     }
 
     private Executor(){
-        primitiveFns.put("+", (List<String> args) -> {
+        primitiveFns.put("+", (List<SyntaxNode> args, Integer depth) -> {
             int sum = 0;
-            for(String i : args) {
-                sum += Integer.decode(i);
+            for(SyntaxNode i : args) {
+                sum += Integer.decode(execute(i));
             }
             return Integer.toString(sum);
         });
-        primitiveFns.put("", (List<String> args) -> {
-            if(args.size() == 1) return args.get(0);
+        primitiveFns.put("", (List<SyntaxNode> args, Integer depth) -> {
+            if(args.size() == 1) return execute(args.get(0));
 
             String output = "(";
 
-            for(String i : args){
-                output += i + ", ";
+            for(SyntaxNode i : args){
+                output += execute(i) + ", ";
             }
             output += ")";
 
             return output;
         });
-        primitiveFns.put("deref", (List<String> args) -> execute(SyntaxNode.getNodeByID(Integer.decode(args.get(0)))));
-        primitiveFns.put("print", (List<String> args) -> {args.forEach((String i) -> {
-                System.out.println(i);
+        primitiveFns.put("ref", (List<SyntaxNode> args, Integer depth) -> Integer.toString(args.get(0).getId()));
+        primitiveFns.put("deref", (List<SyntaxNode> args, Integer depth) -> execute(SyntaxNode.getNodeByID(Integer.decode(execute(args.get(0))))));
+        primitiveFns.put("print", (List<SyntaxNode> args, Integer depth) -> {args.forEach((SyntaxNode i) -> {
+                System.out.println(execute(i));
             });
             return "";
         });
+        primitiveFns.put("=", (List<SyntaxNode> args, Integer depth) -> registerFunction(args, depth));
     }
 
     public String execute(SyntaxNode root, int depth){
@@ -54,37 +57,20 @@ public class Executor {
 
         switch (token.type){
             case function:
-                if(token.tokenData.equals("ref")) return Integer.toString(root.getChildren().get(0).getId());
                 if(token.tokenData.equals("=")){
 
-                    ArrayList<SyntaxNode> args = new ArrayList<>();
 
-                    for(SyntaxNode i : root.getChildren().get(0).getChildren()){
-                        args.add(i);
-                    }
-
-                    PurpleFunction fun = new PurpleFunction(root.getChildren().get(root.getChildren().size()-1),
-                            root.getChildren().get(0).getToken().tokenData,
-                            args,
-                            depth-1);
-
-                    SM.addFunction(fun);
-
-                    return "";
                 }
 
-                ArrayList<String> args = new ArrayList();
-                for(SyntaxNode i : root.getChildren()){
-                    args.add(execute(i, depth));
-                }
+                ArrayList<SyntaxNode> args = root.getChildren();
 
                 // if it's a built in function run it
-                if(isPrimitiveFn(token.tokenData)) return runPrimitiveFn(token.tokenData, args);
+                if(isPrimitiveFn(token.tokenData)) return runPrimitiveFn(token.tokenData, args, depth);
 
                 // otherwise get it, set it's variables, then run it.
                 PurpleFunction fun = SM.getFunction(token.tokenData, depth);
                 for(int i = 0; i < fun.args.size(); i++){
-                    SM.addFunction(new PurpleFunction(args.get(i), fun.args.get(i).getToken().tokenData, depth));
+                    SM.addFunction(new PurpleFunction(execute(args.get(i)), fun.args.get(i).getToken().tokenData, depth));
                 }
 
                 return execute(fun.rootNode, depth);
@@ -100,11 +86,29 @@ public class Executor {
         return execute(root, -1);
     }
 
-    private String runPrimitiveFn(String tokenData, ArrayList<String> args) {
-        return primitiveFns.get(tokenData).apply(args);
+    private String runPrimitiveFn(String tokenData, ArrayList<SyntaxNode> args, int depth) {
+        return primitiveFns.get(tokenData).apply(args, depth);
     }
 
     private boolean isPrimitiveFn(String tokenData) {
         return primitiveFns.containsKey(tokenData);
     }
+
+    private String registerFunction(List<SyntaxNode> args, int depth){
+        ArrayList<SyntaxNode> fnArgs = new ArrayList<>();
+
+        for(SyntaxNode i : args.get(0).getChildren()){
+            fnArgs.add(i);
+        }
+
+        PurpleFunction fun = new PurpleFunction(args.get(args.size()-1),
+                args.get(0).getToken().tokenData,
+                fnArgs,
+                depth-1);
+
+        SM.addFunction(fun);
+
+        return "";
+    }
+
 }
