@@ -24,7 +24,7 @@ public class Executor {
         primitiveFns.put("+", (List<SyntaxNode> args, Integer depth) -> {
             int sum = 0;
             for(SyntaxNode i : args) {
-                sum += Integer.decode(execute(i));
+                sum += Integer.decode(execute(i, depth));
             }
             return Integer.toString(sum);
         });
@@ -43,11 +43,27 @@ public class Executor {
         primitiveFns.put("ref", (List<SyntaxNode> args, Integer depth) -> Integer.toString(args.get(0).getId()));
         primitiveFns.put("deref", (List<SyntaxNode> args, Integer depth) -> execute(SyntaxNode.getNodeByID(Integer.decode(execute(args.get(0))))));
         primitiveFns.put("print", (List<SyntaxNode> args, Integer depth) -> {args.forEach((SyntaxNode i) -> {
-                System.out.println(execute(i));
+                System.out.println(execute(i, depth));
             });
             return "";
         });
         primitiveFns.put("=", (List<SyntaxNode> args, Integer depth) -> registerFunction(args, depth));
+        primitiveFns.put("==", (List<SyntaxNode> args, Integer depth) -> {
+            boolean out = true;
+            String eq = execute(args.get(0), depth);
+
+            for(SyntaxNode i : args){
+                out = out && execute(i, depth).equals(eq);
+            }
+
+            return Boolean.toString(out);
+        });
+        primitiveFns.put("if", (List<SyntaxNode> args, Integer depth) -> {
+            if(execute(args.get(0), depth).equals("true")){
+                return execute(args.get(1), depth);
+            }else if(args.size() > 2)return execute(args.get(2), depth);
+            else return "";
+        });
     }
 
     public String execute(SyntaxNode root, int depth){
@@ -70,7 +86,7 @@ public class Executor {
                 // otherwise get it, set it's variables, then run it.
                 PurpleFunction fun = SM.getFunction(token.tokenData, depth);
                 for(int i = 0; i < fun.args.size(); i++){
-                    SM.addFunction(new PurpleFunction(execute(args.get(i)), fun.args.get(i).getToken().tokenData, depth));
+                    SM.addFunction(new PurpleFunction(execute(args.get(i), depth), fun.args.get(i).getToken().tokenData, depth));
                 }
 
                 return execute(fun.rootNode, depth);
