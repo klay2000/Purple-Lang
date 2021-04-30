@@ -17,6 +17,6 @@ public class PurpleFunction {
     }
 
     public PurpleFunction(String value, String name, int depth){
-        this(new SyntaxNode(new Token(value)), name, new ArrayList<>(), depth);
+        this(new SyntaxNode(new Token(value, -1, -1)), name, new ArrayList<>(), depth);
     }
 }

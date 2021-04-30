@@ -5,7 +5,7 @@ import java.util.Stack;
 public class Parser {
 
     SyntaxNode parse(Stack<Token> stack){
-        SyntaxNode root = new SyntaxNode(new Token(""));
+        SyntaxNode root = new SyntaxNode(new Token("", 0, 0));
 
         parseSubtree(stack, root);
 
@@ -22,7 +22,9 @@ public class Parser {
                      */
                     if(root.getChildren().size() == 0
                             || root.getChildren().get(root.getChildren().size()-1).getChildren().size() != 0)
-                        root.addChild(new SyntaxNode(new Token("")));
+                        root.addChild(new SyntaxNode(new Token("",
+                                root.getToken().getLineNum(),
+                                root.getToken().getCharNum())));
 
                     parseSubtree(stack, root.getChildren().get(root.getChildren().size()-1));
                     break;

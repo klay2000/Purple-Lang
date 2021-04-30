@@ -30,9 +30,18 @@ public class Lexer {
 
         Stack<Token> tokens = new Stack<Token>();
 
+        int charNum = 0;
+        int lineNum = 0;
+
         while(!tokenStrings.isEmpty()){
             String i = tokenStrings.pop();
-            tokens.add(new Token(i));
+            tokens.add(new Token(i, charNum, lineNum));
+
+            if(i.contains("\n")){
+                charNum = 0;
+                lineNum++;
+            }
+            else charNum += i.length();
 
         }
 

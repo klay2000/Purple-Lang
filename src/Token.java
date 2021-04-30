@@ -4,7 +4,13 @@ public class Token{
     TokenType type;
     String tokenData;
 
-    Token(String tokenString){
+    private final int lineNum;
+    private final int charNum;
+
+    Token(String tokenString, int lineNum, int charNum){
+        this.lineNum = lineNum;
+        this.charNum = charNum;
+
         switch(tokenString){
             case "(":
                 type = TokenType.open;
@@ -25,6 +31,14 @@ public class Token{
                 }
                 tokenData = tokenString;
         }
+    }
+
+    public int getLineNum(){
+        return this.lineNum;
+    }
+
+    public int getCharNum(){
+        return this.charNum;
     }
 
 }
