@@ -1,4 +1,4 @@
-package src;
+package src.main.java.com.klaytonsmith.purple;
 
 import java.util.ArrayList;
 import java.util.List;

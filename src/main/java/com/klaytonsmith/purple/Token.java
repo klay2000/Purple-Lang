@@ -1,4 +1,4 @@
-package src;
+package src.main.java.com.klaytonsmith.purple;
 
 public class Token{
     TokenType type;

@@ -1,8 +1,7 @@
-package src;
+package src.main.java.com.klaytonsmith.purple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Stack;
 
 public class Lexer {

@@ -1,4 +1,4 @@
-package src;
+package src.main.java.com.klaytonsmith.purple;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
