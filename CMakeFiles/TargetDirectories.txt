@@ -1,3 +1,0 @@
-/home/ae/Purple-Lang/CMakeFiles/Purple.dir
-/home/ae/Purple-Lang/CMakeFiles/edit_cache.dir
-/home/ae/Purple-Lang/CMakeFiles/rebuild_cache.dir
