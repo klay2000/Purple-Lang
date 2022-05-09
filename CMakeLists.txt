@@ -2,4 +2,4 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Purple)
 
-add_executable(Purple purple.c)
+add_executable(Purple purple.c tokenizer.c)

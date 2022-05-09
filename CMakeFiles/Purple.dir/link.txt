@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/Purple.dir/purple.c.o CMakeFiles/Purple.dir/tokenizer.c.o -o Purple 
