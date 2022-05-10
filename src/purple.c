@@ -4,9 +4,11 @@
 #include "interpreter.h"
 
 int main( int argc, char* argv ){
-	struct Token* i = tokenize(argv);
+	char* str = "() {} \"test\" idenTest()";
+	struct Token* i = tokenize(str);
 	while(i->type != eof){
-		printf("%d", i->type);
+		if(i->type != start)
+			printf("%d: %c\n", i->type, *(i->text));
 		i = i->next_token;
 	}
 	return 0;
