@@ -13,15 +13,18 @@ struct Token* push_token(struct Token* parent, struct Token* child){
 struct Token* recursive_tokenization(struct Token* t, char* text){
     struct Token* n = malloc(sizeof(*n));
 
+    // skip whitespace
     while(is_whitespace(text)){
         *text++;
     }
 
+    // eof
     if(*text == 0){
         n->type = eof;
         n->text = malloc(sizeof(char));
         *(n->text) = 0;
     }
+    // parenthesis
     else if(*text == '('){
         n->type = open_par;
         n->text = malloc(sizeof(char)*2);
@@ -34,6 +37,7 @@ struct Token* recursive_tokenization(struct Token* t, char* text){
         *(n->text) = ')';
         *(n->text+1) = 0;
     }
+    // braces
     else if(*text == '{'){
         n->type = open_brace;
         n->text = malloc(sizeof(char)*2);
@@ -46,6 +50,7 @@ struct Token* recursive_tokenization(struct Token* t, char* text){
         *(n->text) = '}';
         *(n->text+1) = 0;
     }
+    // string literals
     else if(*text == '\"' | *text == '\''){
         n->type = literal;
         
@@ -57,8 +62,8 @@ struct Token* recursive_tokenization(struct Token* t, char* text){
 
         while(*text != term){
             if(*text == '\\'){
-                len++;
-                text++;
+                len+=1;
+                text+=1;
             }
 
             len++;
@@ -73,6 +78,7 @@ struct Token* recursive_tokenization(struct Token* t, char* text){
 
         *(n->text+len) = 0;
     }
+    // number literals
     else if(*text >= 48 && *text <= 57){
         n->type = literal;
 
@@ -83,6 +89,7 @@ struct Token* recursive_tokenization(struct Token* t, char* text){
             len++;
             text++;
         }
+        text--;
 
         n->text = malloc(sizeof(char)*len+1);
 
@@ -91,7 +98,31 @@ struct Token* recursive_tokenization(struct Token* t, char* text){
         }
 
         *(n->text+len) = 0;
+    }
+    // identifiers
+    else if((*text >= 65 && *text <= 90)
+          ||(*text >= 97 && *text <= 122)){
+        
+        n->type = identifier;
 
+        int len = 0;
+        char* start = text;
+
+        while((*text >= 65 && *text <= 90)
+            ||(*text >= 97 && *text <= 122)
+            ||(*text >= 48 && *text <= 57)){
+            len++;
+            text++;
+        }
+        text--;
+
+        n->text = malloc(sizeof(char)*len+1);
+
+        for(int i = 0; i < len; i++){
+            *(n->text+i) = *(start+i);
+        }
+
+        *(n->text+len) = 0;
     }
 
     if(n->type == eof){

@@ -4,7 +4,7 @@
 #include "interpreter.h"
 
 int main( int argc, char* argv ){
-	char* str = "() {} \"tes\\\'\"t\" 1234567890 idenTest()";
+	char* str = "() {} \"tes\\\'\\\"t\"1234567890iden123Test99(){}";
 	struct Token* i = tokenize(str);
 	while(i->type != eof){
 		printf("%d: %s\n", i->type, i->text);
