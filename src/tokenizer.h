@@ -7,8 +7,7 @@ enum Tokentype{
     literal,
     open_par,
     close_par,
-    open_brace,
-    close_brace,
+    comma,
     eof
 };
 
@@ -18,8 +17,10 @@ struct Token{
     enum Tokentype type;
 };
 
-struct Token* push_token(struct Token* parent, struct Token* child);
-struct Token* recursive_tokenization(struct Token* t, char* text);
 struct Token* tokenize(char* text);
+
+static struct Token* push_token(struct Token* parent, struct Token* child);
+static struct Token* recursive_tokenization(struct Token* t, char* text);
+static int is_whitespace(char* c);
 
 #endif

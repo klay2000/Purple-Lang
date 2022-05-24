@@ -1,16 +1,16 @@
 #include "tokenizer.h"
 #include <stdlib.h>
 
-int is_whitespace(char* c){
+static int is_whitespace(char* c){
     return *c == 13 | *c == '\n' | *c == '\t' | *c == ' ';
 }
 
-struct Token* push_token(struct Token* parent, struct Token* child){
+static struct Token* push_token(struct Token* parent, struct Token* child){
     parent->next_token = child;
     return parent;
 }
 
-struct Token* recursive_tokenization(struct Token* t, char* text){
+static struct Token* recursive_tokenization(struct Token* t, char* text){
     struct Token* n = malloc(sizeof(*n));
 
     // skip whitespace
@@ -21,34 +21,22 @@ struct Token* recursive_tokenization(struct Token* t, char* text){
     // eof
     if(*text == 0){
         n->type = eof;
-        n->text = malloc(sizeof(char));
-        *(n->text) = 0;
+        n->text = "";
     }
+
     // parenthesis
     else if(*text == '('){
         n->type = open_par;
-        n->text = malloc(sizeof(char)*2);
-        *(n->text) = '(';
-        *(n->text+1) = 0;
+        n->text = "(";
     }
     else if(*text == ')'){
         n->type = close_par;
-        n->text = malloc(sizeof(char)*2);
-        *(n->text) = ')';
-        *(n->text+1) = 0;
+        n->text = ")";
     }
     // braces
-    else if(*text == '{'){
-        n->type = open_brace;
-        n->text = malloc(sizeof(char)*2);
-        *(n->text) = '{';
-        *(n->text+1) = 0;
-    }
-    else if(*text == '}'){
-        n->type = close_brace;
-        n->text = malloc(sizeof(char)*2);
-        *(n->text) = '}';
-        *(n->text+1) = 0;
+    else if(*text == ','){
+        n->type = comma;
+        n->text = ",";
     }
     // string literals
     else if(*text == '\"' | *text == '\''){

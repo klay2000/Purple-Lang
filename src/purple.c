@@ -4,11 +4,8 @@
 #include "interpreter.h"
 
 int main( int argc, char* argv ){
-	char* str = "() {} \"tes\\\'\\\"t\"1234567890iden123Test99(){}";
-	struct Token* i = tokenize(str);
-	while(i->type != eof){
-		printf("%d: %s\n", i->type, i->text);
-		i = i->next_token;
-	}
+	char* str = "test(hi(\"test2\", 4))";
+	struct Token* tokens = tokenize(str);
+	struct SyntaxNode* root = parse(tokens);
 	return 0;
 }
