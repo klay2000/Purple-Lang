@@ -11,7 +11,7 @@
             "request": "launch",
             "target": "./purple",
             "cwd": "${workspaceRoot}",
-            "valuesFormatting": "parseText"
+            "valuesFormatting": "prettyPrinters"
         }
     ]
 }

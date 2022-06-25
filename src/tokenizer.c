@@ -11,7 +11,7 @@ static struct Token* push_token(struct Token* parent, struct Token* child){
 }
 
 static struct Token* recursive_tokenization(struct Token* t, char* text){
-    struct Token* n = malloc(sizeof(n));
+    struct Token* n = malloc(sizeof(struct Token));
 
     // skip whitespace
     while(is_whitespace(text)){
@@ -123,7 +123,7 @@ static struct Token* recursive_tokenization(struct Token* t, char* text){
 }
 
 struct Token* tokenize(char* text){
-    struct Token* start_token = malloc(sizeof(*start_token));
+    struct Token* start_token = malloc(sizeof(struct Token));
     start_token->type = start;
     start_token->text = malloc(sizeof(char));
     *(start_token->text) = 0;

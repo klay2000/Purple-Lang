@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 struct SyntaxNode* parse(struct Token* tokens){
-	struct SyntaxNode* firstNode = malloc(sizeof(*firstNode));
+	struct SyntaxNode* firstNode = malloc(sizeof(struct SyntaxNode));
 	firstNode->token = tokens;
 	firstNode->children = NULL;
-	return recursive_parse(tokens+1, firstNode);
+	return recursive_parse(tokens->next_token, firstNode);
 }
 
 static struct SyntaxNode* recursive_parse(struct Token* tokens, struct SyntaxNode* lastNode){
@@ -17,20 +17,22 @@ static struct SyntaxNode* recursive_parse(struct Token* tokens, struct SyntaxNod
 	while(tokens->type != eof){
 
 		if(tokens->type != open_par && tokens->type != close_par){
-			newNode = malloc(sizeof(newNode));
+			newNode = malloc(sizeof(struct SyntaxNode));
 			newNode->token = tokens;
 
 			lastNode->children = push_node(lastNode->children, newNode);
 			
-			tokens++;
+			tokens = tokens->next_token;
 		}
 		else if(tokens->type == open_par){
-			newNode = recursive_parse(++tokens, peek_node(lastNode->children));
-
+			newNode = recursive_parse(tokens->next_token, peek_node(lastNode->children));
 			lastNode->children = push_node(lastNode->children, newNode);
+
+			tokens = tokens->next_token;
 		}
 		else{
-			tokens ++;
+			tokens = tokens->next_token;
+			
 			return lastNode;
 		}
 	}
@@ -39,10 +41,10 @@ static struct SyntaxNode* recursive_parse(struct Token* tokens, struct SyntaxNod
 }
 
 struct SyntaxNodeStack* push_node(struct SyntaxNodeStack* list, struct SyntaxNode* node){
-	struct SyntaxNodeStack* newList = malloc(sizeof(*newList));
+	struct SyntaxNodeStack* newList = malloc(sizeof(struct SyntaxNodeStack));
 
 	if(list == NULL){
-		list = malloc(sizeof(list));
+		list = malloc(sizeof(struct SyntaxNodeStack));
 		list->child = NULL;
 		list->node = NULL;
 	}
