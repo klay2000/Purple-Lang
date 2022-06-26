@@ -13,9 +13,7 @@ static struct SyntaxNode* recursive_parse(struct Token* tokens, struct SyntaxNod
 
 	struct SyntaxNode* newNode;
 	
-
 	while(tokens->type != eof){
-
 		if(tokens->type != open_par && tokens->type != close_par){
 			newNode = malloc(sizeof(struct SyntaxNode));
 			newNode->token = tokens;
@@ -25,15 +23,13 @@ static struct SyntaxNode* recursive_parse(struct Token* tokens, struct SyntaxNod
 			tokens = tokens->next_token;
 		}
 		else if(tokens->type == open_par){
-			newNode = recursive_parse(tokens->next_token, peek_node(lastNode->children));
-			lastNode->children = push_node(lastNode->children, newNode);
+			recursive_parse(tokens->next_token, peek_node(lastNode->children));
 
 			tokens = tokens->next_token;
 		}
 		else{
 			tokens = tokens->next_token;
-			
-			return lastNode;
+			break;
 		}
 	}
 

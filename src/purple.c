@@ -4,7 +4,7 @@
 #include "interpreter.h"
 
 int main( int argc, char* argv ){
-	char* str = "test(hi(\"test2\", 4))";
+	char* str = "test(hi)";
 	struct Token* tokens = tokenize(str);
 	struct SyntaxNode* root = parse(tokens);
 	return 0;
